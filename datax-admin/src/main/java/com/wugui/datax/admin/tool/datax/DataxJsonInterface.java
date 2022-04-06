@@ -31,6 +31,6 @@ public interface DataxJsonInterface {
     Map<String, Object> buildMongoDBReader();
 
     Map<String, Object> buildMongoDBWriter();
-
+    Map<String, Object> buildKafkaWriter();
     Map<String, Object> buildWriter();
 }

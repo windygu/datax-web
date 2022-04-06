@@ -16,6 +16,8 @@ public interface JdbcConstants {
 
     String MONGODB                      ="mongodb";
 
+    String Kafka                      ="kafka";
+
     String JTDS                       = "jtds";
 
     String MOCK                       = "mock";
@@ -47,6 +49,8 @@ public interface JdbcConstants {
     String MYSQL_DRIVER               = "com.mysql.jdbc.Driver";
     String MYSQL_DRIVER_6             = "com.mysql.cj.jdbc.Driver";
     String MYSQL_DRIVER_REPLICATE     = "com.mysql.jdbc.";
+
+    String RDBMS                      = "rdbms";
 
     String MARIADB                    = "mariadb";
     String MARIADB_DRIVER             = "org.mariadb.jdbc.Driver";

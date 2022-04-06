@@ -1,9 +1,6 @@
 package com.wugui.datax.admin.tool.datax;
 
-import com.wugui.datax.admin.tool.pojo.DataxHbasePojo;
-import com.wugui.datax.admin.tool.pojo.DataxHivePojo;
-import com.wugui.datax.admin.tool.pojo.DataxMongoDBPojo;
-import com.wugui.datax.admin.tool.pojo.DataxRdbmsPojo;
+import com.wugui.datax.admin.tool.pojo.*;
 
 import java.util.Map;
 
@@ -51,7 +48,12 @@ public interface DataxPluginInterface {
      * @return
      */
     Map<String,Object> buildMongoDB(DataxMongoDBPojo dataxMongoDBPojo);
-
+    /**
+     * mongodb json构建
+     * @param kafkaPojo
+     * @return
+     */
+    Map<String,Object> buildKafka(KafkaPojo kafkaPojo);
     /**
      * 获取示例
      *

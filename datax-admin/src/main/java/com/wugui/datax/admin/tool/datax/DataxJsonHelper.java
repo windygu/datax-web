@@ -10,10 +10,7 @@ import com.wugui.datax.admin.dto.*;
 import com.wugui.datax.admin.entity.JobDatasource;
 import com.wugui.datax.admin.tool.datax.reader.*;
 import com.wugui.datax.admin.tool.datax.writer.*;
-import com.wugui.datax.admin.tool.pojo.DataxHbasePojo;
-import com.wugui.datax.admin.tool.pojo.DataxHivePojo;
-import com.wugui.datax.admin.tool.pojo.DataxMongoDBPojo;
-import com.wugui.datax.admin.tool.pojo.DataxRdbmsPojo;
+import com.wugui.datax.admin.tool.pojo.*;
 import com.wugui.datax.admin.util.JdbcConstants;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +84,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
 
     private MongoDBWriterDto mongoDBWriterDto;
 
+    private KafkaWriterDto kafkaWriterDto;
 
     //用于保存额外参数
     private Map<String, Object> extraParams = Maps.newHashMap();
@@ -127,9 +125,16 @@ public class DataxJsonHelper implements DataxJsonInterface {
         } else if (MONGODB.equals(datasource)) {
             readerPlugin = new MongoDBReader();
             buildReader = buildMongoDBReader();
+        }else if (RDBMS.equals(datasource)) {
+            readerPlugin = new RdbmsReader();
+            buildReader = buildReader();
         }
     }
 
+    /*
+    dataxJsonDto    用户上传配置，
+    readerDatasource    数据源属性
+     */
     public void initWriter(DataXJsonBuildDto dataxJsonDto, JobDatasource readerDatasource) {
         this.writerDatasource = readerDatasource;
         this.writerTables = dataxJsonDto.getWriterTables();
@@ -138,6 +143,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
         this.rdbmsWriterDto = dataxJsonDto.getRdbmsWriter();
         this.hbaseWriterDto = dataxJsonDto.getHbaseWriter();
         this.mongoDBWriterDto = dataxJsonDto.getMongoDBWriter();
+        this.kafkaWriterDto=dataxJsonDto.getKafkaWriterDto();
         // writer
         String datasource = readerDatasource.getDatasource();
         this.writerColumns = convertKeywordsColumns(datasource, this.writerColumns);
@@ -165,6 +171,15 @@ public class DataxJsonHelper implements DataxJsonInterface {
         } else if (JdbcConstants.MONGODB.equals(datasource)) {
             writerPlugin = new MongoDBWriter();
             buildWriter = this.buildMongoDBWriter();
+        }else if (JdbcConstants.Kafka.equals(datasource)) {
+            writerPlugin = new KafkaWriter();
+            buildWriter = this.buildMongoDBWriter();
+        }else if (RDBMS.equals(datasource)) {
+            writerPlugin = new RdbmsWriter();
+            buildWriter = this.buildWriter();
+        }else if (Kafka.equals(datasource)) {
+            writerPlugin = new KafkaWriter();
+            buildWriter = this.buildKafkaWriter();
         }
     }
 
@@ -317,6 +332,17 @@ public class DataxJsonHelper implements DataxJsonInterface {
         return writerPlugin.build(dataxPluginPojo);
     }
 
+    @Override
+    public Map<String, Object> buildKafkaWriter() {
+        KafkaPojo kafkaPojo = new KafkaPojo();
+        kafkaPojo.setJdbcDatasource(writerDatasource);
+        kafkaPojo.setBrokerList(writerDatasource.getJdbcUrl());
+        kafkaPojo.setTopic(kafkaWriterDto.getTopic());
+        kafkaPojo.setPartitions(kafkaWriterDto.getPartitions());
+        kafkaPojo.setBatchSize(kafkaWriterDto.getBatchSize());
+        kafkaPojo.setColumns(kafkaWriterDto.getColumns());
+        return writerPlugin.buildKafka(kafkaPojo);
+    }
     @Override
     public Map<String, Object> buildHiveWriter() {
         DataxHivePojo dataxHivePojo = new DataxHivePojo();
