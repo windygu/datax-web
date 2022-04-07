@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wugui.datax.admin.mapper.JobDatasourceMapper;
 import com.wugui.datax.admin.entity.JobDatasource;
 import com.wugui.datax.admin.service.JobDatasourceService;
-import com.wugui.datax.admin.tool.query.BaseQueryTool;
-import com.wugui.datax.admin.tool.query.HBaseQueryTool;
-import com.wugui.datax.admin.tool.query.MongoDBQueryTool;
-import com.wugui.datax.admin.tool.query.QueryToolFactory;
+import com.wugui.datax.admin.tool.query.*;
 import com.wugui.datax.admin.util.AESUtil;
 import com.wugui.datax.admin.util.JdbcConstants;
 import org.springframework.stereotype.Service;
@@ -31,6 +28,8 @@ public class JobDatasourceServiceImpl extends ServiceImpl<JobDatasourceMapper, J
     public Boolean  dataSourceTest(JobDatasource jobDatasource) throws IOException {
         if (JdbcConstants.HBASE.equals(jobDatasource.getDatasource())) {
             return new HBaseQueryTool(jobDatasource).dataSourceTest();
+        }else if (JdbcConstants.Kafka.equals(jobDatasource.getDatasource())) {
+            return new KafkaTool(jobDatasource).dataSourceTest();
         }
         String userName = AESUtil.decrypt(jobDatasource.getJdbcUsername());
         //  判断账密是否为密文
