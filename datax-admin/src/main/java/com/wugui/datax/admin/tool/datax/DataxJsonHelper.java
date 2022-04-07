@@ -173,7 +173,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
             buildWriter = this.buildMongoDBWriter();
         }else if (JdbcConstants.Kafka.equals(datasource)) {
             writerPlugin = new KafkaWriter();
-            buildWriter = this.buildMongoDBWriter();
+            buildWriter = this.buildKafkaWriter();
         }else if (RDBMS.equals(datasource)) {
             writerPlugin = new RdbmsWriter();
             buildWriter = this.buildWriter();

@@ -7,12 +7,14 @@ import com.wugui.datax.admin.service.DatasourceQueryService;
 import com.wugui.datax.admin.service.JobDatasourceService;
 import com.wugui.datax.admin.tool.query.*;
 import com.wugui.datax.admin.util.JdbcConstants;
+import org.apache.avro.generic.GenericData;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +47,9 @@ public class DatasourceQueryServiceImpl implements DatasourceQueryService {
         if (ObjectUtil.isNull(datasource)) {
             return Lists.newArrayList();
         }
-        if (JdbcConstants.HBASE.equals(datasource.getDatasource())) {
+        if (JdbcConstants.Kafka.equals(datasource.getDatasource())) {
+            return new ArrayList<>();
+        }else if (JdbcConstants.HBASE.equals(datasource.getDatasource())) {
             return new HBaseQueryTool(datasource).getTableNames();
         } else if (JdbcConstants.MONGODB.equals(datasource.getDatasource())) {
             return new MongoDBQueryTool(datasource).getCollectionNames(datasource.getDatabaseName());
