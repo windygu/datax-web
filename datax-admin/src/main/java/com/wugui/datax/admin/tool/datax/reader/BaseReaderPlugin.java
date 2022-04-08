@@ -32,8 +32,10 @@ public abstract class BaseReaderPlugin extends BaseDataxPlugin {
 
         JobDatasource jobDatasource = plugin.getJobDatasource();
         parameterObj.put("username", jobDatasource.getJdbcUsername());
-        parameterObj.put("password", jobDatasource.getJdbcPassword());
-
+        if (jobDatasource.getJdbcPassword()==null)
+            parameterObj.put("password", "");
+        else
+            parameterObj.put("password", jobDatasource.getJdbcPassword());
         //判断是否是 querySql
         if (StrUtil.isNotBlank(plugin.getQuerySql())) {
             connectionObj.put("querySql", ImmutableList.of(plugin.getQuerySql()));
@@ -47,7 +49,8 @@ public abstract class BaseReaderPlugin extends BaseDataxPlugin {
         }
         parameterObj.put("splitPk",plugin.getSplitPk());
         connectionObj.put("jdbcUrl", ImmutableList.of(jobDatasource.getJdbcUrl()));
-
+        if (jobDatasource.getDatasource()!=null && jobDatasource.getDatasource().equalsIgnoreCase("rdbms"))
+            connectionObj.put("driver", jobDatasource.getJdbcDriverClass());
         parameterObj.put("connection", ImmutableList.of(connectionObj));
 
         readerObj.put("parameter", parameterObj);

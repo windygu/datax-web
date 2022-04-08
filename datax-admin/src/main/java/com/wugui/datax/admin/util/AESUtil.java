@@ -2,6 +2,7 @@ package com.wugui.datax.admin.util;
 
 import com.wugui.datax.admin.core.conf.JobAdminConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -63,6 +64,8 @@ public class AESUtil {
     private static KeyGenerator getKeyGenerator() {
 
         String key = JobAdminConfig.getAdminConfig().getDataSourceAESKey();
+//        if (StringUtils.isEmpty(key))
+//            key="AD42F6697B035B75";
 
         KeyGenerator keygen = null;
         try {
@@ -89,6 +92,7 @@ public class AESUtil {
     }
 
     public static String decrypt(String ciphertext) {
+        if (StringUtils.isEmpty(ciphertext)) return "";
         try {
             KeyGenerator keygen = getKeyGenerator();
             SecretKey secretKey = new SecretKeySpec(keygen.generateKey().getEncoded(), KEY_ALGORITHM);
@@ -101,10 +105,13 @@ public class AESUtil {
 
     public static void main(String[] args) {
         String message = "root";
+//        JobAdminConfig adminConfig=new JobAdminConfig();
+//        JobAdminConfig.getAdminConfig().setDataSourceAESKey("AD42F6697B035B75");
         String ciphertext = encrypt(message);
 
         System.out.println("加密后密文为: " + ciphertext);
         System.out.println("解密后明文为:" + decrypt(ciphertext));
+        System.out.println("解密后明文为:" + decrypt("yRjwDFuoPKlqya9h9H2Amg=="));
     }
 
 }
