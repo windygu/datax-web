@@ -22,7 +22,7 @@ public class KafkaPojo implements Serializable {
     /**
      * kafka列名
      */
-    private List<Map<String, Object>> columns;
+    private List<String> column;
 
     /**
      * 数据源信息

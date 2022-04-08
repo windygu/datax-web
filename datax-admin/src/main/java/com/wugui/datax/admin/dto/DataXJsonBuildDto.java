@@ -44,5 +44,5 @@ public class DataXJsonBuildDto implements Serializable {
 
     private MongoDBWriterDto mongoDBWriter;
 
-    private KafkaWriterDto kafkaWriterDto;
+    private KafkaWriterDto kafkaWriter;
 }

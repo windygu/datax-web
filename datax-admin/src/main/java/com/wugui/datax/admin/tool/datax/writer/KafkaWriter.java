@@ -35,7 +35,7 @@ public class KafkaWriter extends BaseWriterPlugin implements DataxWriterInterfac
         parameterObj.put("topic", plugin.getTopic());
         parameterObj.put("partitions", plugin.getPartitions());
         parameterObj.put("batchSize", plugin.getBatchSize());
-        parameterObj.put("column", plugin.getColumns());
+        parameterObj.put("column", plugin.getColumn());
         writerObj.put("parameter", parameterObj);
         return writerObj;
     }

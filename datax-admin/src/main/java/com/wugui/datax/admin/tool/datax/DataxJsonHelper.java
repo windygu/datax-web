@@ -143,7 +143,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
         this.rdbmsWriterDto = dataxJsonDto.getRdbmsWriter();
         this.hbaseWriterDto = dataxJsonDto.getHbaseWriter();
         this.mongoDBWriterDto = dataxJsonDto.getMongoDBWriter();
-        this.kafkaWriterDto=dataxJsonDto.getKafkaWriterDto();
+        this.kafkaWriterDto=dataxJsonDto.getKafkaWriter();
         // writer
         String datasource = readerDatasource.getDatasource();
         this.writerColumns = convertKeywordsColumns(datasource, this.writerColumns);
@@ -340,7 +340,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
         kafkaPojo.setTopic(kafkaWriterDto.getTopic());
         kafkaPojo.setPartitions(kafkaWriterDto.getPartitions());
         kafkaPojo.setBatchSize(kafkaWriterDto.getBatchSize());
-        kafkaPojo.setColumns(kafkaWriterDto.getColumns());
+        kafkaPojo.setColumn(kafkaWriterDto.getColumn());
         return writerPlugin.buildKafka(kafkaPojo);
     }
     @Override
