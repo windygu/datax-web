@@ -16,6 +16,8 @@ public class DatabaseMetaFactory {
     public static DatabaseInterface getByDbType(String dbType) {
         if (JdbcConstants.MYSQL.equals(dbType)) {
             return MySQLDatabaseMeta.getInstance();
+        }else if (JdbcConstants.RDBMS.equals(dbType)) {
+            return RdmbsDatabaseMeta.getInstance();
         } else if (JdbcConstants.ORACLE.equals(dbType)) {
             return OracleDatabaseMeta.getInstance();
         } else if (JdbcConstants.POSTGRESQL.equals(dbType)) {

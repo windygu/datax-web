@@ -21,6 +21,8 @@ public class QueryToolFactory {
         String datasource = jobDatasource.getDatasource();
         if (JdbcConstants.MYSQL.equals(datasource)) {
             return getMySQLQueryToolInstance(jobDatasource);
+        }else if (JdbcConstants.RDBMS.equals(datasource)) {
+            return getRdbmsQueryToolInstance(jobDatasource);
         } else if (JdbcConstants.ORACLE.equals(datasource)) {
             return getOracleQueryToolInstance(jobDatasource);
         } else if (JdbcConstants.POSTGRESQL.equals(datasource)) {
@@ -29,7 +31,7 @@ public class QueryToolFactory {
             return getSqlserverQueryToolInstance(jobDatasource);
         }else if (JdbcConstants.HIVE.equals(datasource)) {
             return getHiveQueryToolInstance(jobDatasource);
-        } else if (JdbcConstants.CLICKHOUSE.equals(datasource)) {
+        }else if (JdbcConstants.CLICKHOUSE.equals(datasource)) {
             return getClickHouseQueryToolInstance(jobDatasource);
         }else if (JdbcConstants.HBASE20XSQL.equals(datasource)) {
             return getHbase20XsqlQueryToolQueryToolInstance(jobDatasource);
@@ -54,7 +56,14 @@ public class QueryToolFactory {
                     e,jdbcDatasource.getJdbcUsername(),jdbcDatasource.getDatasourceName());
         }
     }
-
+    private static BaseQueryTool getRdbmsQueryToolInstance(JobDatasource jdbcDatasource) {
+        try {
+            return new RdbmsQueryTool(jdbcDatasource);
+        } catch (SQLException e) {
+            throw RdbmsException.asConnException(JdbcConstants.ORACLE,
+                    e,jdbcDatasource.getJdbcUsername(),jdbcDatasource.getDatasourceName());
+        }
+    }
     private static BaseQueryTool getPostgresqlQueryToolInstance(JobDatasource jdbcDatasource) {
         try {
             return new PostgresqlQueryTool(jdbcDatasource);
