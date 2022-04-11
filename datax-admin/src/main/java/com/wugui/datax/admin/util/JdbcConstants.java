@@ -18,6 +18,8 @@ public interface JdbcConstants {
 
     String Kafka                      ="kafka";
 
+    String Hdfs                      ="hdfs";
+
     String JTDS                       = "jtds";
 
     String MOCK                       = "mock";

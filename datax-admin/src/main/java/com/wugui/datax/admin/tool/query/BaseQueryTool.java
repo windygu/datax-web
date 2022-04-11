@@ -310,9 +310,11 @@ public abstract class BaseQueryTool implements QueryToolInterface {
                 String columnName = metaData.getColumnName(i);
                 if (JdbcConstants.HIVE.equals(datasource)) {
                     if (columnName.contains(Constants.SPLIT_POINT)) {
-                        res.add(i - 1 + Constants.SPLIT_SCOLON + columnName.substring(columnName.indexOf(Constants.SPLIT_POINT) + 1) + Constants.SPLIT_SCOLON + metaData.getColumnTypeName(i));
+//                        res.add(i - 1 + Constants.SPLIT_SCOLON + columnName.substring(columnName.indexOf(Constants.SPLIT_POINT) + 1) + Constants.SPLIT_SCOLON + metaData.getColumnTypeName(i));
+                        res.add(columnName.substring(columnName.indexOf(Constants.SPLIT_POINT) + 1));
                     } else {
-                        res.add(i - 1 + Constants.SPLIT_SCOLON + columnName + Constants.SPLIT_SCOLON + metaData.getColumnTypeName(i));
+//                        res.add(i - 1 + Constants.SPLIT_SCOLON + columnName + Constants.SPLIT_SCOLON + metaData.getColumnTypeName(i));
+                        res.add(columnName);
                     }
                 } else {
                     res.add(columnName);

@@ -118,7 +118,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
             buildReader = buildReader();
         } else if (HIVE.equals(datasource)) {
             readerPlugin = new HiveReader();
-            buildReader = buildHiveReader();
+            buildReader = buildReader();
         } else if (HBASE.equals(datasource)) {
             readerPlugin = new HBaseReader();
             buildReader = buildHBaseReader();

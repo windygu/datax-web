@@ -11,6 +11,10 @@ package com.wugui.datax.admin.tool.meta;
 public class HiveDatabaseMeta extends BaseDatabaseMeta implements DatabaseInterface {
     private volatile static HiveDatabaseMeta single;
 
+    @Override
+    public String getSQLQueryFields(String tableName) {
+        return "SELECT * FROM " + tableName + " limit 0";
+    }
     public static HiveDatabaseMeta getInstance() {
         if (single == null) {
             synchronized (HiveDatabaseMeta.class) {
