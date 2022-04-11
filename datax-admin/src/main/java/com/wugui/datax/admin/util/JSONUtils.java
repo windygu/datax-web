@@ -1,7 +1,12 @@
 package com.wugui.datax.admin.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 
 /**
  * DataX JSON 用户名密码解密
@@ -73,4 +78,19 @@ public class JSONUtils {
         json.put("job", job);
         return json.toJSONString();
     }
+
+    public static void main(String[] args) {
+        try{
+
+            String json= FileUtils.readFileToString(new File("d:/temp/job.json"));
+            JSONPath jsonPath=new JSONPath(json);
+            String path=JSONPath.read(json,"$.job.content[0].reader.name").toString();
+//            JSONObject jsonObject = (JSONObject) JSON.parse(json);
+            System.out.println(path);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
 }

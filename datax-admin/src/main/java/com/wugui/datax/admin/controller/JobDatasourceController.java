@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -33,6 +34,8 @@ public class JobDatasourceController extends BaseController {
      */
     @Autowired
     private JobDatasourceService jobJdbcDatasourceService;
+    @Autowired
+    protected HttpServletRequest request;
 
     /**
      * 分页查询所有数据
@@ -50,7 +53,10 @@ public class JobDatasourceController extends BaseController {
             })
     public R<IPage<JobDatasource>> selectAll() {
         BaseForm form = new BaseForm();
-        QueryWrapper<JobDatasource> query = (QueryWrapper<JobDatasource>) form.pageQueryWrapperCustom(form.getParameters(), new QueryWrapper<JobDatasource>());
+        QueryWrapper queryWrapper=new QueryWrapper<JobDatasource>();
+//        if ("y".equalsIgnoreCase(request.getParameter("read")))
+//            queryWrapper.ne("datasource","kafka");
+        QueryWrapper<JobDatasource> query = (QueryWrapper<JobDatasource>) form.pageQueryWrapperCustom(form.getParameters(), queryWrapper);
         return success(jobJdbcDatasourceService.page(form.getPlusPagingQueryEntity(), query));
     }
 

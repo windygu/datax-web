@@ -1,5 +1,6 @@
 package com.wugui.datax.admin.service.impl;
 
+import com.alibaba.fastjson.JSONPath;
 import com.wugui.datatx.core.biz.model.ReturnT;
 import com.wugui.datatx.core.enums.ExecutorBlockStrategyEnum;
 import com.wugui.datatx.core.glue.GlueTypeEnum;
@@ -149,6 +150,15 @@ public class JobServiceImpl implements JobService {
         jobInfo.setJobJson(jobInfo.getJobJson());
         jobInfo.setUpdateTime(new Date());
         jobInfo.setGlueUpdatetime(new Date());
+        try {
+            String json=jobInfo.getJobJson();
+            String table=jobInfo.getJobDesc();
+            String reader= JSONPath.read(json,"$.job.content[0].reader.name").toString().replace("reader","");
+            String writer= JSONPath.read(json,"$.job.content[0].writer.name").toString().replace("writer","");
+            jobInfo.setJobDesc(reader+"-"+table+"-"+writer);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         jobInfoMapper.save(jobInfo);
         if (jobInfo.getId() < 1) {
             return new ReturnT<>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add") + I18nUtil.getString("system_fail")));
