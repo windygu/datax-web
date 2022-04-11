@@ -37,7 +37,7 @@ public class RunUtil {
 			    LOGGER.info(sb.toString());
 			    return sb.toString();
 			}else{
-				Process p=Runtime.getRuntime().exec("sudo nohup " + name + " &");
+				Process p=Runtime.getRuntime().exec("nohup " + name + " &");
 				Field field = p.getClass().getDeclaredField("pid");
 				field.setAccessible(true);
 				return String.valueOf(field.get(p));
