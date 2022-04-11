@@ -3,6 +3,7 @@ package com.wugui.datax.admin.controller;
 import cn.hutool.core.util.StrUtil;
 import com.wugui.datatx.core.biz.model.ReturnT;
 import com.wugui.datax.admin.core.util.I18nUtil;
+import com.wugui.datax.admin.core.util.RunUtil;
 import com.wugui.datax.admin.entity.JobUser;
 import com.wugui.datax.admin.entity.MaxwellJob;
 import com.wugui.datax.admin.mapper.JobUserMapper;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static com.wugui.datatx.core.biz.model.ReturnT.FAIL_CODE;
 
@@ -64,6 +66,66 @@ public class MaxwellController {
 //        return new ReturnT<>(jobUserMapper.getUserById(userId));
 //    }
 //
+
+    @PostMapping("/run")
+    @ApiOperation("运行job")
+    public ReturnT<String> run(@RequestBody MaxwellJob maxwellJob) {
+
+        int databasePid = maxwellJobMapper.getPidById(maxwellJob.getId());
+        //有pid时，
+        if (databasePid != 0) {
+            //如果任务已结束，更新数据库标识为未启动
+            if (!RunUtil.taskRunning(String.valueOf(databasePid))) {
+                maxwellJob.setPid(0);
+                maxwellJobMapper.updatePid(maxwellJob);
+            }
+            //如果未结束，则属于重复启动
+            else {
+                return new ReturnT<>(FAIL_CODE, "当前任务已启动，勿重复提交！");
+            }
+        }
+        //没有pid时启动任务
+        StringBuilder sb = new StringBuilder();
+        sb.append("maxwell" + " --user='" + maxwellJob.getMysqlUser() + "' ");
+        sb.append("--password='" + maxwellJob.getMysqlPassword() + "' ");
+        sb.append("--host='" + maxwellJob.getMysqlHost() + "' ");
+        sb.append("--producer=kafka " + "--kafka.bootstrap.servers=" +maxwellJob.getMysqlHost() + ":9092 ");
+        sb.append("--kafka_topic=" + maxwellJob.getKafkaTopic());
+
+        System.out.println(sb.toString());
+        int pid = Integer.valueOf(RunUtil.Exec(sb.toString(), true));
+        maxwellJob.setPid(pid);
+        maxwellJobMapper.updatePid(maxwellJob);
+        return ReturnT.SUCCESS;
+    }
+    @PostMapping("/kill")
+    @ApiOperation("停止job")
+    public ReturnT<String> kill(@RequestBody MaxwellJob maxwellJob) {
+        int databasePid = maxwellJobMapper.getPidById(maxwellJob.getId());
+        //想要kill一个数据库有pid标识的任务时，
+        if (databasePid != 0) {
+            //如果任务还在运行，正常kill
+            if (RunUtil.taskRunning(String.valueOf(databasePid))) {
+                RunUtil.taskKill(String.valueOf(databasePid));
+                maxwellJob.setPid(0);
+                maxwellJobMapper.updatePid(maxwellJob);
+                return ReturnT.SUCCESS;
+
+            }
+            //如果任务已经被kill，但数据库还未更新时
+            else {
+                maxwellJob.setPid(0);
+                maxwellJobMapper.updatePid(maxwellJob);
+                return new ReturnT<>(FAIL_CODE, "无法停止一个未启动的任务！");
+            }
+
+        }
+        //当没有pid还被kill时
+        return new ReturnT<>(FAIL_CODE, "无法停止一个未启动的任务！");
+
+    }
+
+
     @PostMapping("/add")
     @ApiOperation("添加job")
     public ReturnT<String> add(@RequestBody MaxwellJob maxwellJob) {
@@ -120,7 +182,7 @@ public class MaxwellController {
 
 
         // write
-        maxwellJobMapper.update(maxwellJob);
+        System.out.println(maxwellJobMapper.update(maxwellJob));
         return ReturnT.SUCCESS;
     }
 
@@ -130,6 +192,8 @@ public class MaxwellController {
         int result = maxwellJobMapper.delete(id);
         return result != 1 ? ReturnT.FAIL : ReturnT.SUCCESS;
     }
+
+
 //
 //    @PostMapping(value = "/updatePwd")
 //    @ApiOperation("修改密码")

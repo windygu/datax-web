@@ -18,6 +18,9 @@ public class MaxwellJob {
     private String kafkaServer;
     @ApiModelProperty("kafka主题")
     private String kafkaTopic;
+    @ApiModelProperty("pid")
+    private int pid;
+
 
 
 }

@@ -27,11 +27,16 @@ public interface MaxwellJobMapper {
 //
 //    JobUser getUserById(@Param("id") int id);
 //
-//    List<JobUser> getUsersByIds(@Param("ids") String[] ids);
+    int getPidById(@Param("id") int id);
+
+//    int setPidById(@Param("id") int id, @Param("pid") int pid);
 
     int save(MaxwellJob maxwellJob);
 
+    int updatePid(MaxwellJob maxwellJob);
+
     int update(MaxwellJob maxwellJob);
+
 
     int delete(@Param("id") int id);
 
