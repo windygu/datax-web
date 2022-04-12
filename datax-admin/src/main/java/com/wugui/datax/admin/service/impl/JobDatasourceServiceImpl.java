@@ -28,6 +28,8 @@ public class JobDatasourceServiceImpl extends ServiceImpl<JobDatasourceMapper, J
     public Boolean  dataSourceTest(JobDatasource jobDatasource) throws IOException {
         if (JdbcConstants.HBASE.equals(jobDatasource.getDatasource())) {
             return new HBaseQueryTool(jobDatasource).dataSourceTest();
+        }else if (JdbcConstants.Hdfs.equals(jobDatasource.getDatasource())) {
+            return new HdfsTool(jobDatasource).dataSourceTest();
         }else if (JdbcConstants.Kafka.equals(jobDatasource.getDatasource())) {
             return new KafkaTool(jobDatasource).dataSourceTest();
         }

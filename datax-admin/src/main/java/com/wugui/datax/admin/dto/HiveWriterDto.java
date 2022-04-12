@@ -3,6 +3,7 @@ package com.wugui.datax.admin.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 构建hive write dto
@@ -26,4 +27,6 @@ public class HiveWriterDto implements Serializable {
     private String writeMode;
 
     private String writeFieldDelimiter;
+
+    private List<String> column;
 }

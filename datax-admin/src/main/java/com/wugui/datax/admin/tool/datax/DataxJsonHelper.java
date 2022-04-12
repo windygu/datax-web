@@ -164,7 +164,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
             buildWriter = buildWriter();
         } else if (JdbcConstants.HIVE.equals(datasource)) {
             writerPlugin = new HiveWriter();
-            buildWriter = this.buildHiveWriter();
+            buildWriter = this.buildHdfsWriter();
         } else if (JdbcConstants.HBASE.equals(datasource)) {
             writerPlugin = new HBaseWriter();
             buildWriter = this.buildHBaseWriter();
@@ -177,9 +177,9 @@ public class DataxJsonHelper implements DataxJsonInterface {
         }else if (RDBMS.equals(datasource)) {
             writerPlugin = new RdbmsWriter();
             buildWriter = this.buildWriter();
-        }else if (Kafka.equals(datasource)) {
-            writerPlugin = new KafkaWriter();
-            buildWriter = this.buildKafkaWriter();
+        }else if (Hdfs.equals(datasource)) {
+            writerPlugin = new HdfsWriter();
+            buildWriter = this.buildHdfsWriter();
         }
     }
 
@@ -278,7 +278,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
             column.put("type", c.split(Constants.SPLIT_SCOLON)[2]);
             columns.add(column);
         });
-        dataxHivePojo.setColumns(columns);
+//        dataxHivePojo.setColumns(columns);
         dataxHivePojo.setReaderDefaultFS(hiveReaderDto.getReaderDefaultFS());
         dataxHivePojo.setReaderFieldDelimiter(hiveReaderDto.getReaderFieldDelimiter());
         dataxHivePojo.setReaderFileType(hiveReaderDto.getReaderFileType());
@@ -344,16 +344,16 @@ public class DataxJsonHelper implements DataxJsonInterface {
         return writerPlugin.buildKafka(kafkaPojo);
     }
     @Override
-    public Map<String, Object> buildHiveWriter() {
+    public Map<String, Object> buildHdfsWriter() {
         DataxHivePojo dataxHivePojo = new DataxHivePojo();
         dataxHivePojo.setJdbcDatasource(writerDatasource);
         List<Map<String, Object>> columns = Lists.newArrayList();
-        writerColumns.forEach(c -> {
+        for (int i = 0; i < readerColumns.size(); i++) {
             Map<String, Object> column = Maps.newLinkedHashMap();
-            column.put("name", c.split(Constants.SPLIT_SCOLON)[1]);
-            column.put("type", c.split(Constants.SPLIT_SCOLON)[2]);
+            column.put("name", readerColumns.get(i));
+            column.put("type", "string");
             columns.add(column);
-        });
+        }
         dataxHivePojo.setColumns(columns);
         dataxHivePojo.setWriterDefaultFS(hiveWriterDto.getWriterDefaultFS());
         dataxHivePojo.setWriteFieldDelimiter(hiveWriterDto.getWriteFieldDelimiter());
@@ -361,6 +361,7 @@ public class DataxJsonHelper implements DataxJsonInterface {
         dataxHivePojo.setWriterPath(hiveWriterDto.getWriterPath());
         dataxHivePojo.setWriteMode(hiveWriterDto.getWriteMode());
         dataxHivePojo.setWriterFileName(hiveWriterDto.getWriterFileName());
+//        dataxHivePojo.setColumns(hiveWriterDto.getw);
         return writerPlugin.buildHive(dataxHivePojo);
     }
 

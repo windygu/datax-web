@@ -47,7 +47,7 @@ public class DatasourceQueryServiceImpl implements DatasourceQueryService {
         if (ObjectUtil.isNull(datasource)) {
             return Lists.newArrayList();
         }
-        if (JdbcConstants.Kafka.equals(datasource.getDatasource())) {
+        if (JdbcConstants.Kafka.equals(datasource.getDatasource()) || JdbcConstants.Hdfs.equals(datasource.getDatasource())) {
             return new ArrayList<>();
         }else if (JdbcConstants.HBASE.equals(datasource.getDatasource())) {
             return new HBaseQueryTool(datasource).getTableNames();

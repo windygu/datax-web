@@ -22,7 +22,7 @@ public interface DataxJsonInterface {
 
     Map<String, Object> buildHiveReader();
 
-    Map<String, Object> buildHiveWriter();
+    Map<String, Object> buildHdfsWriter();
 
     Map<String, Object> buildHBaseReader();
 
