@@ -23,13 +23,7 @@ public interface MaxwellJobMapper {
     int pageListCount(@Param("offset") int offset,
                       @Param("pagesize") int pagesize);
 
-//    JobUser loadByUserName(@Param("username") String username);
-//
-//    JobUser getUserById(@Param("id") int id);
-//
     int getPidById(@Param("id") int id);
-
-//    int setPidById(@Param("id") int id, @Param("pid") int pid);
 
     int save(MaxwellJob maxwellJob);
 

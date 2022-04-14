@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -24,20 +25,20 @@ public class RunUtil {
 	}
 	public static String Exec(String name,boolean async){
 		try {
-
 			if (!async){
 				Process p=Runtime.getRuntime().exec(name);
 				p.waitFor();
-				BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream()));  
+				BufferedReader br=new BufferedReader(new InputStreamReader(p.getInputStream(), "UTF-8"));
 			    StringBuffer sb=new StringBuffer();  
 			    String inline;  
 			    while(null!=(inline=br.readLine())){  
-			      sb.append(inline).append("/n");  
+			      sb.append(inline).append("\n");
 			    }
-			    LOGGER.info(sb.toString());
-			    return sb.toString();
+				Field field = p.getClass().getDeclaredField("pid");
+				field.setAccessible(true);
+				return String.valueOf(field.get(p));
 			}else{
-				Process p=Runtime.getRuntime().exec("nohup " + name + " &");
+				Process p= Runtime.getRuntime().exec(name);
 				Field field = p.getClass().getDeclaredField("pid");
 				field.setAccessible(true);
 				return String.valueOf(field.get(p));

@@ -86,13 +86,13 @@ public class MaxwellController {
         }
         //没有pid时启动任务
         StringBuilder sb = new StringBuilder();
-        sb.append("maxwell" + " --user='" + maxwellJob.getMysqlUser() + "' ");
-        sb.append("--password='" + maxwellJob.getMysqlPassword() + "' ");
-        sb.append("--host='" + maxwellJob.getMysqlHost() + "' ");
-        sb.append("--producer=kafka " + "--kafka.bootstrap.servers=" +maxwellJob.getMysqlHost() + ":9092 ");
+        sb.append("maxwell" + " --user=" + maxwellJob.getMysqlUser() + " ");
+        sb.append("--password=" + maxwellJob.getMysqlPassword() + " ");
+        sb.append("--host=" + maxwellJob.getMysqlHost() + " ");
+        sb.append("--producer=kafka " + "--kafka.bootstrap.servers=" +maxwellJob.getKafkaServer() + ":9092 ");
         sb.append("--kafka_topic=" + maxwellJob.getKafkaTopic());
 
-        System.out.println(sb.toString());
+
         int pid = Integer.valueOf(RunUtil.Exec(sb.toString(), true));
         maxwellJob.setPid(pid);
         maxwellJobMapper.updatePid(maxwellJob);
