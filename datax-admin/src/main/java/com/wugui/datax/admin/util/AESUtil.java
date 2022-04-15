@@ -83,7 +83,7 @@ public class AESUtil {
             SecretKey secretKey = new SecretKeySpec(keygen.generateKey().getEncoded(), KEY_ALGORITHM);
             return Base64.getEncoder().encodeToString(encrypt(secretKey, message.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            log.warn("content encrypt error {}", e.getMessage());
+            log.error("content encrypt error {}", e.getMessage());
         }
         return null;
     }
@@ -104,7 +104,8 @@ public class AESUtil {
         String ciphertext = encrypt(message);
 
         System.out.println("加密后密文为: " + ciphertext);
-        System.out.println("解密后明文为:" + decrypt(ciphertext));
+//        System.out.println("解密后明文为:" + decrypt("XCYVpFosvZBBWobFzmLWvA=="));
+
     }
 
 }

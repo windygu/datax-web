@@ -46,4 +46,6 @@ public class AESEncryptHandler extends BaseTypeHandler<String> {
         String columnValue = cs.getString(columnIndex);
         return AESUtil.decrypt(columnValue);
     }
+
+
 }
