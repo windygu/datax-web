@@ -76,6 +76,7 @@ public abstract class BaseQueryTool implements QueryToolInterface {
         String userName = AESUtil.decrypt(jobDatasource.getJdbcUsername());
 
         //这里默认使用 hikari 数据源
+        //解密未明文。
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername(userName);
         dataSource.setPassword(AESUtil.decrypt(jobDatasource.getJdbcPassword()));

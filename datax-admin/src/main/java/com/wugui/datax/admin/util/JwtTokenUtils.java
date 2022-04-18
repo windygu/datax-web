@@ -18,6 +18,7 @@ import static com.wugui.datatx.core.util.Constants.SPLIT_COMMA;
  */
 public class JwtTokenUtils {
 
+
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
 

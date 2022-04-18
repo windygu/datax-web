@@ -3,9 +3,13 @@ package com.wugui.datax.admin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.wugui.datatx.core.biz.model.ReturnT;
 import com.wugui.datax.admin.core.util.LocalCacheUtil;
 import com.wugui.datax.admin.entity.JobDatasource;
+import com.wugui.datax.admin.entity.MaxwellJob;
+import com.wugui.datax.admin.mapper.MaxwellJobMapper;
 import com.wugui.datax.admin.service.JobDatasourceService;
+import com.wugui.datax.admin.util.AESUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,7 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -34,9 +38,9 @@ public class JobDatasourceController extends BaseController {
      */
     @Autowired
     private JobDatasourceService jobJdbcDatasourceService;
-    @Autowired
-    protected HttpServletRequest request;
 
+    @Resource
+    private MaxwellJobMapper maxwellJobMapper;
     /**
      * 分页查询所有数据
      *
@@ -53,10 +57,7 @@ public class JobDatasourceController extends BaseController {
             })
     public R<IPage<JobDatasource>> selectAll() {
         BaseForm form = new BaseForm();
-        QueryWrapper queryWrapper=new QueryWrapper<JobDatasource>();
-//        if ("y".equalsIgnoreCase(request.getParameter("read")))
-//            queryWrapper.ne("datasource","kafka");
-        QueryWrapper<JobDatasource> query = (QueryWrapper<JobDatasource>) form.pageQueryWrapperCustom(form.getParameters(), queryWrapper);
+        QueryWrapper<JobDatasource> query = (QueryWrapper<JobDatasource>) form.pageQueryWrapperCustom(form.getParameters(), new QueryWrapper<JobDatasource>());
         return success(jobJdbcDatasourceService.page(form.getPlusPagingQueryEntity(), query));
     }
 
@@ -71,6 +72,20 @@ public class JobDatasourceController extends BaseController {
     }
 
     /**
+     * 获取所有数据源
+     * @return
+     */
+    @ApiOperation("添加 template maxwell 任务")
+    @PostMapping("/templateJob")
+    public ReturnT<String> addTemplateJob(MaxwellJob maxwellJob) {
+        maxwellJob.setMysqlUser(AESUtil.decrypt(maxwellJob.getMysqlUser()));
+        maxwellJob.setMysqlPassword(AESUtil.decrypt(maxwellJob.getMysqlPassword()));
+        System.out.println(maxwellJob.toString());
+        maxwellJobMapper.save(maxwellJob);
+        return ReturnT.SUCCESS;
+    }
+
+    /**
      * 通过主键查询单条数据
      *
      * @param id 主键
@@ -81,6 +96,7 @@ public class JobDatasourceController extends BaseController {
     public R<JobDatasource> selectOne(@PathVariable Serializable id) {
         return success(this.jobJdbcDatasourceService.getById(id));
     }
+
 
     /**
      * 新增数据
