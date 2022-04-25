@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 基础参数辅助类
+ * 基础参数辅助类，分页排序相关
  *
  * @author zhouhongfa@gz-yibo.com
  * @version 1.0

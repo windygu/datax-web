@@ -18,6 +18,14 @@ import java.util.List;
 
 /**
  * Created by xuxueli on 17/5/10.
+ * JobApiController 用于对执行器提供接口
+ *
+ * 分别提供了三种接口：
+ * callback：任务执行结果的回调，更新执行日志信息，如果设置了子任务触发子任务。
+ *
+ * registry：作为注册接口也是心跳💗接口，更新 信息的 update_time
+ *
+ * registryRemove：注销执行器接口
  */
 @RestController
 @RequestMapping("/api")
@@ -28,7 +36,7 @@ public class JobApiController {
 
     /**
      * callback
-     *
+     * 任务执行结果的回调，更新执行日志信息，如果设置了子任务触发子任务。
      * @param data
      * @return
      */

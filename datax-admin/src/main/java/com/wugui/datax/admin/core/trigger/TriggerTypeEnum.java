@@ -9,6 +9,12 @@ import com.wugui.datax.admin.core.util.I18nUtil;
  */
 public enum TriggerTypeEnum {
 
+//    jobconf_trigger_type_cron=Cron触发
+//            jobconf_trigger_type_manual=手动触发
+//    jobconf_trigger_type_parent=父任务触发
+//            jobconf_trigger_type_api=API触发
+//    jobconf_trigger_type_retry=失败重试触发
+
     MANUAL(I18nUtil.getString("jobconf_trigger_type_manual")),
     CRON(I18nUtil.getString("jobconf_trigger_type_cron")),
     RETRY(I18nUtil.getString("jobconf_trigger_type_retry")),

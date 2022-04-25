@@ -87,6 +87,7 @@ public class JobInfoController extends BaseController{
 
     @PostMapping(value = "/trigger")
     @ApiOperation("触发任务")
+    //页面点击运行任务的触发入口
     public ReturnT<String> triggerJob(@RequestBody TriggerJobDto dto) {
         // force cover job param
         String executorParam=dto.getExecutorParam();

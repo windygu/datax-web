@@ -9,7 +9,7 @@ import com.wugui.datax.admin.core.trigger.JobTrigger;
 import java.util.Date;
 
 /**
- * datax-job trigger
+ * datax-job trigger 在日志管理页面终止任务，"日志查看"/"终止任务" 按钮
  * Created by jingwk on 2019/12/15.
  */
 public class KillJob {

@@ -13,7 +13,10 @@ import javax.sql.DataSource;
 
 /**
  * xxl-job config
- *
+ * JobAdminConfig是 admin 的核心配置类，此处开始初始化调度器、读取admin的application.yml
+ *  @Value读取application.yml中的配置加载到程序中。
+ *  InitialingBean是一个接口，提供了一个唯一的方法afterPropertiesSet()。
+ *  DisposableBean也是一个接口，提供了一个唯一的方法destory()。
  * @author xuxueli 2017-04-28
  */
 
@@ -31,11 +34,12 @@ public class JobAdminConfig implements InitializingBean, DisposableBean {
 
     private JobScheduler xxlJobScheduler;
 
+    //  1.实现了 InitializingBean 接口，初始化完成后会调用此方法
     @Override
     public void afterPropertiesSet() throws Exception {
         adminConfig = this;
-
         xxlJobScheduler = new JobScheduler();
+        //2.初始化调度器
         xxlJobScheduler.init();
     }
 

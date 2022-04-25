@@ -18,6 +18,13 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author xuxueli 2018-10-28 00:18:17
+ * XxlJobScheduler 是 xxl-job-admin 非常核心的一个类。各功能的启动【入口】
+ * 1.JobRegistryMonitorHelper-启动一个线程，定时扫描过期的执行器、扫描执行器绑定到 对应的 appname 上。
+ * 2.JobFailMonitorHelper-启动一个线程，定时扫描需要重试的任务、如果设置了告警 那么触发消息通知。
+ * 3.JobLosedMonitorHelper-启动一个线程，定时扫描将任务处理结果丢失且超过10分钟，执行器没有了心跳💗的调度记录 主动处理为失败。
+ * 4.JobTriggerPoolHelper-初始化 一个快速处理的线程池和一个慢处理的线程池 分别执行时间消耗不一样的任务，加快任务执行性能，比较好的一个设计。
+ * 5.JobLogReportHelper-启动一个线程，定时扫描任务执行和日志信息统计称报告信息，用于展示。
+ * 6.JobScheduleHelper-启动一个线程，定时扫描5s中内需要执行的任务，触发任务处理。
  */
 
 public class JobScheduler {
@@ -25,22 +32,22 @@ public class JobScheduler {
 
 
     public void init() throws Exception {
-        // init i18n
+        // 初始化 执行器阻塞策略 的国际化
         initI18n();
 
-        // admin registry monitor run
+        // 删除过期执行器&更新新增执行器
         JobRegistryMonitorHelper.getInstance().start();
 
-        // admin monitor run
+        // 1.重试需要重试的任务 2.告警设置了告警的任务
         JobFailMonitorHelper.getInstance().start();
 
-        // admin trigger pool start
+        // 初始化了 一个 快速 和 一个慢 的 线程池，根据历史任务执行时间划分
         JobTriggerPoolHelper.toStart();
 
-        // admin log report start
+        // 运行报告统计
         JobLogReportHelper.getInstance().start();
 
-        // start-schedule
+        // 用于任务触发（重点）。定时扫描 需要执行的任务，并计算下一次执行的时间
         JobScheduleHelper.getInstance().start();
 
         logger.info(">>>>>>>>> init datax-web admin success.");

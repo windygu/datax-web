@@ -10,16 +10,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * xxl-job config
+ * 读取/Users/zhennan/Documents/datax-web/datax-executor/src/main/resources/application.yml的配置
  *
  * @author xuxueli 2017-04-28
  */
+//bean注解不搭配configuration就不会交给ioc管理bean单例。
 @Configuration
 public class DataXConfig {
     private Logger logger = LoggerFactory.getLogger(DataXConfig.class);
 
     private static final String DEFAULT_LOG_PATH = "log/executor/jobhandler";
 
+//    @Value注解表示，spring将有特定类处理该属性值，具体的处理为，读取属性配置文件中对应属性的值赋值给该属性，
+//    属性配置文件分两种，一种是application.properties，spring启动时会自动加载，一种是自定义属性配置文件，
+//    自定义配置文件通过添加@PropertySource注解加载，此注解可以同时加载多个属性配置文件，也可以加载一个文件，
+//    多个属性配置文件中包括重复属性时，采用后面的属性定义（覆盖
     @Value("${datax.job.admin.addresses}")
     private String adminAddresses;
 

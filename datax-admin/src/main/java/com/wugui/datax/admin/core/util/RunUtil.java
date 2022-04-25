@@ -24,6 +24,7 @@ public class RunUtil {
 		System.out.println(RunUtil.Exec("jps", true));
 	}
 	public static String Exec(String name,boolean async){
+		System.out.println(name);
 		try {
 			if (!async){
 				Process p=Runtime.getRuntime().exec(name);

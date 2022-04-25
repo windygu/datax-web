@@ -92,6 +92,7 @@ public class JobLogController {
         }
     }
 
+    //此方法在此项目未被使用，前端点击 使用下面的killJob替代 从而停止单个任务运行
     @RequestMapping(value = "/logKill", method = RequestMethod.POST)
     @ApiOperation("kill任务")
     public ReturnT<String> logKill(int id) {

@@ -26,13 +26,13 @@ public class JobSpringExecutor extends JobExecutor implements ApplicationContext
     public void afterSingletonsInstantiated() {
 
         // init JobHandler Repository
+        // 遍历所有添加了@JobHandler注解的class，将这些class添加到名为jobHandlerRepository的ConcurrentMap中
         initJobHandlerRepository(applicationContext);
 
-        // refresh GlueFactory
+        // 兼容spring-glue
         GlueFactory.refreshInstance(1);
 
-
-        // super start
+        //调用父类的start方法
         try {
             super.start();
         } catch (Exception e) {

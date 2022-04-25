@@ -5,6 +5,7 @@ import com.wugui.datax.admin.core.util.I18nUtil;
 
 /**
  * Created by xuxueli on 17/3/10.
+ * 任务"执行器"支持集群部署，支持执行器多节点路由策略选择
  */
 public enum ExecutorRouteStrategyEnum {
 

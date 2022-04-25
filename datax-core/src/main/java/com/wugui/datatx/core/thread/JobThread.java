@@ -40,7 +40,7 @@ public class JobThread extends Thread {
     private String stopReason;
 
     private boolean running = false;    // if running job
-    private int idleTimes = 0;            // idel times
+    private int idleTimes = 0;            // idle times
 
 
     public JobThread(int jobId, IJobHandler handler) {

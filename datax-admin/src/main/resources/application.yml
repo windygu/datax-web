@@ -1,6 +1,6 @@
 server:
   #port: 8080
-  port: ${server.port}
+  port: 8082
 spring:
   #数据源
   datasource:
@@ -32,8 +32,8 @@ spring:
     port: 25
     #username: xxx@qq.com
     #password: xxx
-    username: ${mail.username}
-    password: ${mail.password}
+    username: 470261517@qq.com
+    password: 111
     properties:
       mail:
         smtp:
@@ -83,12 +83,12 @@ mybatis-plus:
 
 # 配置mybatis-plus打印sql日志
 logging:
-  #level:
-  #  com.wugui.datax.admin.mapper: info
-#path: ./data/applogs/admin
   level:
-    com.wugui.datax.admin.mapper: error
-    path: ${data.path}/applogs/admin
+    com.wugui.datax.admin.mapper: info
+    path: ./data/applogs/admin
+#  level:
+#    com.wugui.datax.admin.mapper: error
+#    path: ${data.path}/applogs/admin
 
 
 

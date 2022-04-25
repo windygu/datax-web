@@ -21,7 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * job monitor instance
- *
+ *JobFailMonitorHelper 定时任务用于处理：
+ * 1.重试需要重试的任务
+ * 2.告警设置了告警的任务
  * @author xuxueli 2015-9-1 18:05:56
  */
 public class JobFailMonitorHelper {
@@ -45,12 +47,12 @@ public class JobFailMonitorHelper {
 				// monitor
 				while (!toStop) {
 					try {
-
+						//查询出所有失败的任务日志
 						List<Long> failLogIds = JobAdminConfig.getAdminConfig().getJobLogMapper().findFailJobLogIds(1000);
 						if (failLogIds!=null && !failLogIds.isEmpty()) {
 							for (long failLogId: failLogIds) {
 
-								// lock log
+								// lock log 通过改变 告警状态 加锁(字段状态来模拟锁操作)
 								int lockRet = JobAdminConfig.getAdminConfig().getJobLogMapper().updateAlarmStatus(failLogId, 0, -1);
 								if (lockRet < 1) {
 									continue;
@@ -58,15 +60,17 @@ public class JobFailMonitorHelper {
 								JobLog log = JobAdminConfig.getAdminConfig().getJobLogMapper().load(failLogId);
 								JobInfo info = JobAdminConfig.getAdminConfig().getJobInfoMapper().loadById(log.getJobId());
 
-								// 1、fail retry monitor
+								// 1、如果重试的次数大于 0
 								if (log.getExecutorFailRetryCount() > 0) {
+									//重新调用
 									JobTriggerPoolHelper.trigger(log.getJobId(), TriggerTypeEnum.RETRY, (log.getExecutorFailRetryCount()-1), log.getExecutorShardingParam(), log.getExecutorParam());
 									String retryMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_type_retry") +"<<<<<<<<<<< </span><br>";
 									log.setTriggerMsg(log.getTriggerMsg() + retryMsg);
+									//更新执行器日志
 									JobAdminConfig.getAdminConfig().getJobLogMapper().updateTriggerInfo(log);
 								}
 
-								// 2、fail alarm monitor
+								// 2、失败告警
 								int newAlarmStatus = 0;		// 告警状态：0-默认、-1=锁定状态、1-无需告警、2-告警成功、3-告警失败
 								if (info!=null && info.getAlarmEmail()!=null && info.getAlarmEmail().trim().length()>0) {
 									boolean alarmResult = true;
@@ -92,6 +96,7 @@ public class JobFailMonitorHelper {
 					}
 
                     try {
+						//休息10秒，防止循环性能消耗过大
                         TimeUnit.SECONDS.sleep(10);
                     } catch (Exception e) {
                         if (!toStop) {
@@ -105,6 +110,7 @@ public class JobFailMonitorHelper {
 
 			}
 		});
+		//设置为守护线程
 		monitorThread.setDaemon(true);
 		monitorThread.setName("datax-web, admin JobFailMonitorHelper");
 		monitorThread.start();

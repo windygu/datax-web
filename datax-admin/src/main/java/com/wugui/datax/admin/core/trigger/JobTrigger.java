@@ -28,6 +28,7 @@ import java.util.Date;
 
 /**
  * xxl-job trigger
+ * 真正的执行类
  * Created by xuxueli on 17/7/13.
  */
 public class JobTrigger {
@@ -43,6 +44,13 @@ public class JobTrigger {
      * @param executorShardingParam
      * @param executorParam         null: use job param
      *                              not null: cover job param
+     *                              流程：
+     * 1.从数据库查询出任务信息
+     * 2.获取设置的重试次数
+     * 3.查询出对应的任务组信息
+     * 4.判断是否在执行任务时录入了执行器地址，如果没有录入则用默认的执行器列表
+     * 5.数据分片处理
+     * 6.processTrigger 做 http 请求 执行器
      */
     public static void trigger(int jobId, TriggerTypeEnum triggerType, int failRetryCount, String executorShardingParam, String executorParam) {
         JobInfo jobInfo = JobAdminConfig.getAdminConfig().getJobInfoMapper().loadById(jobId);
@@ -62,9 +70,11 @@ public class JobTrigger {
         int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfo.getExecutorFailRetryCount();
         JobGroup group = JobAdminConfig.getAdminConfig().getJobGroupMapper().load(jobInfo.getJobGroup());
 
-        // sharding param
+        // 分片处理，https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a4a507ba460f47d2846e8170a283b37b~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp
         int[] shardingParam = null;
+        //分片数是从 “0” 开始的，所以两片的情况话分别是 “0、1”；
         if (executorShardingParam != null) {
+            //例如 1/2 分为1、2表示当前任务被分为一半交给当前执行
             String[] shardingArr = executorShardingParam.split("/");
             if (shardingArr.length == 2 && isNumeric(shardingArr[0]) && isNumeric(shardingArr[1])) {
                 shardingParam = new int[2];
@@ -72,13 +82,16 @@ public class JobTrigger {
                 shardingParam[1] = Integer.valueOf(shardingArr[1]);
             }
         }
+        //广播模式。给每一台机器都发送执行消息，分片总数为集群机器数量，分片标记从0开始。
         if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null)
                 && group.getRegistryList() != null && !group.getRegistryList().isEmpty()
                 && shardingParam == null) {
+            //每一片（服务器）进行分片执行
             for (int i = 0; i < group.getRegistryList().size(); i++) {
                 processTrigger(group, jobInfo, finalFailRetryCount, triggerType, i, group.getRegistryList().size());
             }
         } else {
+            // 非广播模式调用JobTrigger.processTrigger()
             if (shardingParam == null) {
                 shardingParam = new int[]{0, 1};
             }
@@ -108,12 +121,12 @@ public class JobTrigger {
 
         TriggerParam triggerParam = new TriggerParam();
 
-        // param
+        // 阻塞、路由、广播、分片等配置情况
         ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(jobInfo.getExecutorBlockStrategy(), ExecutorBlockStrategyEnum.SERIAL_EXECUTION);  // block strategy
         ExecutorRouteStrategyEnum executorRouteStrategyEnum = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
         String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) ? String.valueOf(index).concat("/").concat(String.valueOf(total)) : null;
 
-        // 1、save log-id
+        // 1、存储日志到xxl_job_log，保存任务id
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.MILLISECOND, 0);
@@ -142,7 +155,8 @@ public class JobTrigger {
         triggerParam.setBroadcastTotal(total);
         triggerParam.setJobJson(jobInfo.getJobJson());
 
-        //increment parameter
+        //设置增量参数：id或者时间或者分区
+        //当前数据库的getIncrementType为0，而上面三个的code分别是1、2、3，所以下面三个if else都不走
         Integer incrementType = jobInfo.getIncrementType();
         if (incrementType != null) {
             triggerParam.setIncrementType(incrementType);
@@ -167,12 +181,14 @@ public class JobTrigger {
         String address = null;
         ReturnT<String> routeAddressResult = null;
         if (group.getRegistryList() != null && !group.getRegistryList().isEmpty()) {
+            // 如果是分片广播，就根据index获取执行器地址
             if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) {
                 if (index < group.getRegistryList().size()) {
                     address = group.getRegistryList().get(index);
                 } else {
                     address = group.getRegistryList().get(0);
                 }
+                // 否则就根据指定的路由策略，获取执行器地址
             } else {
                 routeAddressResult = executorRouteStrategyEnum.getRouter().route(triggerParam, group.getRegistryList());
                 if (routeAddressResult.getCode() == ReturnT.SUCCESS_CODE) {
@@ -186,6 +202,7 @@ public class JobTrigger {
         // 4、trigger remote executor
         ReturnT<String> triggerResult = null;
         if (address != null) {
+            // 这里就是http调用executor的入口了
             triggerResult = runExecutor(triggerParam, address);
         } else {
             triggerResult = new ReturnT<String>(ReturnT.FAIL_CODE, null);

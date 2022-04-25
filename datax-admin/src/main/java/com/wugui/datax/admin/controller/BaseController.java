@@ -11,6 +11,7 @@ import static com.wugui.datatx.core.util.Constants.STRING_BLANK;
 
 /**
  * base controller
+ * 多个controller的父类，用于获取当前用户id
  */
 public class BaseController extends ApiController {
 

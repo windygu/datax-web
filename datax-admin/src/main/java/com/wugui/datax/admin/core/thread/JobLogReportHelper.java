@@ -13,7 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * job log report helper
+ *JobLogReportHelper 用于定时更新 日志信息、任务执行信息 的统计数据更新。
  *
+ * 流程：
+ * 1.从日志信息从读取出相关统计数据并写入 日志统计表
  * @author xuxueli 2019-11-22
  */
 public class JobLogReportHelper {

@@ -62,7 +62,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         LogResult logResult = JobFileAppender.readLog(logFileName, fromLineNum);
         return new ReturnT<>(logResult);
     }
-
+        //最终由jobThread和jobhandler来处理任务。
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
         // load old：jobHandler + jobThread
