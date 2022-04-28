@@ -10,7 +10,7 @@ import com.wugui.datatx.core.util.JobRemotingUtil;
 import java.util.List;
 
 /**
- * admin api test
+ * 对于admin注册中心的一些api接口处理，post请求
  *
  * @author xuxueli 2017-07-28 22:14:52
  */

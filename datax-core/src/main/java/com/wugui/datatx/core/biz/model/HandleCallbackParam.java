@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by xuxueli on 17/3/2.
+ * 处理回调参数
  */
 public class HandleCallbackParam implements Serializable {
     private static final long serialVersionUID = 42L;

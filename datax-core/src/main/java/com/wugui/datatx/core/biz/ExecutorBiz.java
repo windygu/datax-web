@@ -6,18 +6,22 @@ import com.wugui.datatx.core.biz.model.TriggerParam;
 
 /**
  * Created by xuxueli on 17/3/1.
+ * 用于向executor服务器提供请求，其实是client
  */
 public interface ExecutorBiz {
 
+    public static void main(String[] args) {
+        System.out.println(ExecutorBiz.class.getName());
+    }
     /**
-     * beat
+     * 用于检查心跳；直接返回成功
      *
      * @return
      */
     ReturnT<String> beat();
 
     /**
-     * idle beat
+     * 用于检查忙碌状态；忙碌中（执行任务中，或者队列中有数据）
      *
      * @param jobId
      * @return
@@ -25,7 +29,7 @@ public interface ExecutorBiz {
     ReturnT<String> idleBeat(int jobId);
 
     /**
-     * kill
+     * 用于中断线程；
      *
      * @param jobId
      * @return
@@ -33,7 +37,7 @@ public interface ExecutorBiz {
     ReturnT<String> kill(int jobId);
 
     /**
-     * log
+     * 用于读取日志；
      *
      * @param logDateTim
      * @param logId
@@ -43,7 +47,7 @@ public interface ExecutorBiz {
     ReturnT<LogResult> log(long logDateTim, long logId, int fromLineNum);
 
     /**
-     * run
+     * 用于执行任务；
      *
      * @param triggerParam
      * @return

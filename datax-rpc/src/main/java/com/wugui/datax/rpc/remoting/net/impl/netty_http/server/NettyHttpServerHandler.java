@@ -87,7 +87,11 @@ public class NettyHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
                     return;
                 }
 
-                // invoke + response
+                // netty server 这边调用并返回response
+                //  xxlRpcRequest是服务端发送的请求，大体里面填充了要请求那个接口、具体哪个方法，
+                //                 其中会包含一个ID值，依据ID进行请求的返回。而xxlRpcResponse则是返回到客户端的内容，
+                //                   主要包括请求ID、执行结果，通过Netty回传到客户端。invokeService方法根据请求的接口、方法，
+                //                   从serviceData中取出对应的实现（如开头的new DemoServiceImpl()），通过反射得到运行结果，并将结果回传。
                 XxlRpcResponse xxlRpcResponse = xxlRpcProviderFactory.invokeService(xxlRpcRequest);
 
                 // response serialize

@@ -24,7 +24,7 @@ import static com.wugui.datax.executor.service.jobhandler.DataXConstant.DEFAULT_
 import static com.wugui.datax.executor.service.logparse.AnalysisStatistics.analysisStatisticsLog;
 
 /**
- * DataX任务运行
+ * 有@JobHandler注解，在request发到server后，代理到此类真正执行任务
  *
  * @author jingwk 2019-11-16
  */

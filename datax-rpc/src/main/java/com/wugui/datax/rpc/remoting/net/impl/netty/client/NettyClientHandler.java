@@ -29,7 +29,7 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<XxlRpcRespon
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, XxlRpcResponse xxlRpcResponse) throws Exception {
 
-		// notify response
+		// 提醒 xxlRpcInvokerFactory 结果出来了，并发送
 		xxlRpcInvokerFactory.notifyInvokerFuture(xxlRpcResponse.getRequestId(), xxlRpcResponse);
 	}
 

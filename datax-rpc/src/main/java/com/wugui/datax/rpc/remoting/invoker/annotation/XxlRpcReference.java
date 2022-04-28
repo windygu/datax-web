@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 
 /**
  * rpc service annotation, skeleton of stub ("@Inherited" allow service use "Transactional")
- *
+ * rpc调用者的stub的skeleton，stub是implements此方法的XxlRpcReferenceBean
  * @author 2015-10-29 19:44:33
  */
 @Target({ElementType.FIELD})
@@ -27,7 +27,6 @@ public @interface XxlRpcReference {
 
     LoadBalance loadBalance() default LoadBalance.ROUND;
 
-    //Class<?> iface;
     String version() default "";
 
     long timeout() default 1000;
@@ -35,7 +34,5 @@ public @interface XxlRpcReference {
     String address() default "";
 
     String accessToken() default "";
-
-    //XxlRpcInvokeCallback invokeCallback() ;
 
 }

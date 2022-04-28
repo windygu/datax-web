@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xuxueli on 17/3/2.
+ * 用来向注册中心注册&移除executor的线程
  */
 public class ExecutorRegistryThread {
     private static Logger logger = LoggerFactory.getLogger(ExecutorRegistryThread.class);

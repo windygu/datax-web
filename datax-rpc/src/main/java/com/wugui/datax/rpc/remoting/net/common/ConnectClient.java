@@ -41,7 +41,7 @@ public abstract class ConnectClient {
         ConnectClient clientPool = ConnectClient.getPool(address, connectClientImpl, xxlRpcReferenceBean);
 
         try {
-            // do invoke
+            // nettyConnectClient.writeAndFlush()写入channel
             clientPool.send(xxlRpcRequest);
         } catch (Exception e) {
             throw e;

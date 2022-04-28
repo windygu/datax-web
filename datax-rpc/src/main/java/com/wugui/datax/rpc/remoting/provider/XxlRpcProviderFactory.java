@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * provider
+ * rpc服务server方制作工厂
  *
  * @author xuxueli 2015-10-31 22:54:27
  */
@@ -28,8 +28,7 @@ public class XxlRpcProviderFactory {
 	private static final Logger logger = LoggerFactory.getLogger(XxlRpcProviderFactory.class);
 
 	// ---------------------- config ----------------------
-
-	private Class<? extends Server> server = NettyServer.class;
+	private Class<? extends Server> server = NettyServer.class; //被setServer覆盖了，实际是nettyhttpserver
 	private Class<? extends Serializer> serializer = HessianSerializer.class;
 
 	private int corePoolSize = 60;
@@ -41,8 +40,7 @@ public class XxlRpcProviderFactory {
 
 	private Class<? extends ServiceRegistry> serviceRegistry = null;
 	private Map<String, String> serviceRegistryParam = null;
-
-	// set
+	// ---------------------- config end----------------------
 	public void setServer(Class<? extends Server> server) {
 		this.server = server;
 	}
@@ -96,6 +94,7 @@ public class XxlRpcProviderFactory {
 
 	public void start() throws Exception {
 
+		System.out.println("tmddd");
 		// valid
 		if (this.server == null) {
 			throw new XxlRpcException("xxl-rpc provider server missing.");
@@ -111,7 +110,7 @@ public class XxlRpcProviderFactory {
 			this.ip = IpUtil.getIp();
 		}
 		if (this.port <= 0) {
-			this.port = 7080;
+			this.port = 7080; //9999
 		}
 		if (NetUtil.isPortUsed(this.port)) {
 			throw new XxlRpcException("xxl-rpc provider port["+ this.port +"] is used.");
@@ -120,18 +119,19 @@ public class XxlRpcProviderFactory {
 		// init serializerInstance
 		this.serializerInstance = serializer.newInstance();
 
-		// start server
+		// start netty http server
 		serviceAddress = IpUtil.getIpPort(this.ip, port);
 		serverInstance = server.newInstance();
 		serverInstance.setStartedCallback(new BaseCallback() {		// serviceRegistry started
 			@Override
 			public void run() throws Exception {
+				// 此处为run方法的缩写，在nettyserver启动后，把provider信息注册到注册中心
 				// start registry
 				if (serviceRegistry != null) {
-					serviceRegistryInstance = serviceRegistry.newInstance();
-					serviceRegistryInstance.start(serviceRegistryParam);
+					serviceRegistryInstance = serviceRegistry.newInstance(); //executorServiceRegistry
+					serviceRegistryInstance.start(serviceRegistryParam); //向注册中心注册executor
 					if (serviceData.size() > 0) {
-						serviceRegistryInstance.registry(serviceData.keySet(), serviceAddress);
+						serviceRegistryInstance.registry(serviceData.keySet(), serviceAddress); //未被调用且未被填写代码，和start功能重复
 					}
 				}
 			}
@@ -149,6 +149,7 @@ public class XxlRpcProviderFactory {
 				}
 			}
 		});
+		//netty server启动，然后运行setStartedCallback（）内的方法，也就是注册执行器到注册中心。
 		serverInstance.start(this);
 	}
 
@@ -169,7 +170,7 @@ public class XxlRpcProviderFactory {
 	}
 
 	/**
-	 * make service key
+	 * 制作serviceKey: 接口名+版本（如果存在）
 	 *
 	 * @param iface
 	 * @param version
@@ -184,7 +185,7 @@ public class XxlRpcProviderFactory {
 	}
 
 	/**
-	 * add service
+	 * Map<String, Object> serviceData 里存入key(executorBiz)和服务的executorBizImpl Bean
 	 *
 	 * @param iface
 	 * @param version
@@ -229,7 +230,7 @@ public class XxlRpcProviderFactory {
 		}
 
 		try {
-			// invoke
+			// 反射
 			Class<?> serviceClass = serviceBean.getClass();
 			String methodName = xxlRpcRequest.getMethodName();
 			Class<?>[] parameterTypes = xxlRpcRequest.getParameterTypes();

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by xuxueli on 17/3/23.
+ * 执行任务的日志结果
  */
 public class LogResult implements Serializable {
     private static final long serialVersionUID = 42L;

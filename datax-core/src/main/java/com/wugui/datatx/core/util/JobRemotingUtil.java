@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Map;
 
 /**
+ *
  * @author xuxueli 2018-11-25 00:55:31
  */
 public class JobRemotingUtil {
@@ -31,7 +32,7 @@ public class JobRemotingUtil {
         HttpURLConnection connection = null;
         BufferedReader bufferedReader = null;
         try {
-            // connection
+            // connection，admin的地址
             URL realUrl = new URL(url);
             connection = (HttpURLConnection) realUrl.openConnection();
 

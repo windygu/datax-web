@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * rpc reference bean, use by api
- *
+ * 可以根据这个类生成代理对象，也就是我们常说的客户端stub。
  * @author xuxueli 2015-10-29 20:18:32
  */
 public class XxlRpcReferenceBean {
@@ -38,7 +38,7 @@ public class XxlRpcReferenceBean {
 
     // ---------------------- config ----------------------
 
-    private Class<? extends Client> client = NettyClient.class;
+    private Class<? extends Client> client = NettyClient.class; //此处就nettyclient和nettyhttpclient，默认前者
     private Class<? extends Serializer> serializer = HessianSerializer.class;
     private CallType callType = CallType.SYNC;
     private LoadBalance loadBalance = LoadBalance.ROUND;
@@ -150,19 +150,19 @@ public class XxlRpcReferenceBean {
             this.invokerFactory = XxlRpcInvokerFactory.getInstance();
         }
 
-        // init serializerInstance
+        // 生成一个序列化实例
         this.serializerInstance = serializer.newInstance();
 
-        // init Client
+        // 生成一个client实例，如：NettyClient.class.newInstance()
         clientInstance = client.newInstance();
-        clientInstance.init(this);
+        clientInstance.init(this); //client对象初始化stub
 
         return this;
     }
 
 
     // ---------------------- util ----------------------
-
+    //生成代理对象，发送至rpc server，再返回结果：return xxlRpcResponse.getResult();
     public Object getObject() throws Exception {
 
         // initClient
@@ -176,7 +176,7 @@ public class XxlRpcReferenceBean {
                     // method param
                     String className = method.getDeclaringClass().getName();    // iface.getName()
                     String varsion_ = version;
-                    String methodName = method.getName();
+                    String methodName = method.getName(); //"run()"
                     Class<?>[] parameterTypes = method.getParameterTypes();
                     Object[] parameters = args;
 

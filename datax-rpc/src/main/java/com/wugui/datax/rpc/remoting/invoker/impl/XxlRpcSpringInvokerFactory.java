@@ -61,7 +61,8 @@ public class XxlRpcSpringInvokerFactory extends InstantiationAwareBeanPostProces
         // collection
         final Set<String> serviceKeyList = new HashSet<>();
 
-        // parse XxlRpcReferenceBean
+        // @XxlRpcReference注解是注释在调用方的，但是datax-web没出现过（未被使用？），xxl-job没用xxl-rpc而是用了http请求
+        //所以也没用到
         ReflectionUtils.doWithFields(bean.getClass(), field -> {
             if (field.isAnnotationPresent(XxlRpcReference.class)) {
                 // valid

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @author xuxueli 2017-07-27 21:52:49
- * RPC远程服务代理 AdminBiz
+ * 用于向admin发送请求
  */
 public interface AdminBiz {
 
@@ -35,7 +35,7 @@ public interface AdminBiz {
     // ---------------------- registry ----------------------
 
     /**
-     * registry
+     * 注册
      *
      * @param registryParam
      * @return
@@ -43,7 +43,7 @@ public interface AdminBiz {
     ReturnT<String> registry(RegistryParam registryParam);
 
     /**
-     * registry remove
+     * 移除注册
      *
      * @param registryParam
      * @return

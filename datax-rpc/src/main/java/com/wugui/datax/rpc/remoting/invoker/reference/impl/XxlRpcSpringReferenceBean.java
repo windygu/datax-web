@@ -18,8 +18,6 @@ public class XxlRpcSpringReferenceBean implements FactoryBean<Object>, Initializ
 
     @Override
     public void afterPropertiesSet() {
-
-        // init config
         this.xxlRpcReferenceBean = new XxlRpcReferenceBean();
     }
 
@@ -38,14 +36,5 @@ public class XxlRpcSpringReferenceBean implements FactoryBean<Object>, Initializ
     public boolean isSingleton() {
         return false;
     }
-
-
-    /**
-     *	public static <T> ClientProxy ClientProxy<T> getFuture(Class<T> type) {
-     *		<T> ClientProxy proxy = (<T>) new ClientProxy();
-     *		return proxy;
-     *	}
-     */
-
 
 }

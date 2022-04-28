@@ -28,8 +28,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyConnectClient extends ConnectClient {
 
-
+    //Netty内部都是通过线程在处理各种数据，EventLoopGroup就是用来管理调度他们的，注册Channel，管理他们的生命周期
     private EventLoopGroup group;
+    //netty channel
     private Channel channel;
 
 
@@ -38,14 +39,14 @@ public class NettyConnectClient extends ConnectClient {
         final NettyConnectClient thisClient = this;
 
         Object[] array = IpUtil.parseIpPort(address);
-        String host = (String) array[0];
-        int port = (int) array[1];
+        String host = (String) array[0]; //ip
+        int port = (int) array[1]; //port
 
 
         this.group = new NioEventLoopGroup();
-        Bootstrap bootstrap = new Bootstrap();
+        Bootstrap bootstrap = new Bootstrap(); //netty bootstrap
         bootstrap.group(group)
-                .channel(NioSocketChannel.class)
+                .channel(NioSocketChannel.class) //Channel包含了ChannelPipeline，ChannelPipeline内部包含了N个handler，每一个handler都是由一个线程去执行；
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel channel) throws Exception {
@@ -59,7 +60,7 @@ public class NettyConnectClient extends ConnectClient {
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
-        this.channel = bootstrap.connect(host, port).sync().channel();
+        this.channel = bootstrap.connect(host, port).sync().channel(); //真正连接netty server
 
         // valid
         if (!isValidate()) {
@@ -90,7 +91,7 @@ public class NettyConnectClient extends ConnectClient {
         logger.debug(">>>>>>>>>>> xxl-rpc netty client close.");
     }
 
-
+    //真正发送到netty server
     @Override
     public void send(XxlRpcRequest xxlRpcRequest) throws Exception {
         this.channel.writeAndFlush(xxlRpcRequest).sync();

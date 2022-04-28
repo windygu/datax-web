@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * service registry
+ * 定义了注册的启动，停止，注册，发现的抽象方法
  *
  *  /xxl-rpc/dev/
  *              - key01(service01)

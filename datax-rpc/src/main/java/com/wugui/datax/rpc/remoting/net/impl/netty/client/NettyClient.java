@@ -13,6 +13,7 @@ public class NettyClient extends Client {
 
 	private Class<? extends ConnectClient> connectClientImpl = NettyConnectClient.class;
 
+	//发送
 	@Override
 	public void asyncSend(String address, XxlRpcRequest xxlRpcRequest) throws Exception {
 		ConnectClient.asyncSend(xxlRpcRequest, address, connectClientImpl, xxlRpcReferenceBean);

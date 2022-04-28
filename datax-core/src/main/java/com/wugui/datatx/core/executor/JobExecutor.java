@@ -86,7 +86,7 @@ public class JobExecutor {
         ProcessCallbackThread.getInstance().start();
 
         // 6.获取当前的ip和配置的执行器注册端口，然后以此端口和类中的方法发布为TCP服务端；
-        // 创建完服务后，往所有调度中心发送注册服务的http请求（注册接口是 api/registry）；
+        // 创建完服务后，可以往所有调度中心发送注册服务的http请求（注册接口是 api/registry）；
         // 参数内容包括：执行器名称、当前TCP服务端的ip和端口；当系统关闭时，还会往所有调度中心发送移除注册的http请求
         // （移除接口是 api/registryRemove）；
         // 这个方法执行完执行器端就启动完成了
@@ -182,7 +182,7 @@ public class JobExecutor {
         xxlRpcProviderFactory.setServiceRegistry(ExecutorServiceRegistry.class);
         xxlRpcProviderFactory.setServiceRegistryParam(serviceRegistryParam);
 
-        // add services
+        // add services, com.wugui.datatx.core.biz.ExecutorBiz
         xxlRpcProviderFactory.addService(ExecutorBiz.class.getName(), null, new ExecutorBizImpl());
 
         // start
@@ -194,13 +194,13 @@ public class JobExecutor {
 
         @Override
         public void start(Map<String, String> param) {
-            // start registry
+            // 向注册中心注册executor
             ExecutorRegistryThread.getInstance().start(param.get("appName"), param.get("address"));
         }
 
         @Override
         public void stop() {
-            // stop registry
+            // 向注册中心停止并移除executor
             ExecutorRegistryThread.getInstance().toStop();
         }
 
@@ -252,12 +252,13 @@ public class JobExecutor {
     // ---------------------- job thread repository ----------------------
     private static ConcurrentMap<Integer, JobThread> jobThreadRepository = new ConcurrentHashMap<Integer, JobThread>();
 
+    //新增job线程，根据job id和jobhandler处理. 运行jobthread的run()
     public static JobThread registJobThread(int jobId, IJobHandler handler, String removeOldReason) {
         JobThread newJobThread = new JobThread(jobId, handler);
         newJobThread.start();
         logger.info(">>>>>>>>>>> datax-web regist JobThread success, jobId:{}, handler:{}", new Object[]{jobId, handler});
 
-        JobThread oldJobThread = jobThreadRepository.put(jobId, newJobThread);    // putIfAbsent | oh my god, map's put method return the old value!!!
+        JobThread oldJobThread = jobThreadRepository.put(jobId, newJobThread);    // map特性是put新value返回旧value
         if (oldJobThread != null) {
             oldJobThread.toStop(removeOldReason);
             oldJobThread.interrupt();
@@ -266,6 +267,7 @@ public class JobExecutor {
         return newJobThread;
     }
 
+    //移除job线程
     public static JobThread removeJobThread(int jobId, String removeOldReason) {
         JobThread oldJobThread = jobThreadRepository.remove(jobId);
         if (oldJobThread != null) {
@@ -275,7 +277,7 @@ public class JobExecutor {
         }
         return null;
     }
-
+    //根据job id获取对应job线程
     public static JobThread loadJobThread(int jobId) {
         JobThread jobThread = jobThreadRepository.get(jobId);
         return jobThread;

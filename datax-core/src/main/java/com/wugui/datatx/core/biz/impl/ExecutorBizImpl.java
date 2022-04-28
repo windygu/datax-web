@@ -62,7 +62,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         LogResult logResult = JobFileAppender.readLog(logFileName, fromLineNum);
         return new ReturnT<>(logResult);
     }
-        //最终由jobThread和jobhandler来处理任务。
+    //最终由jobThread和jobhandler来处理任务。
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
         // load old：jobHandler + jobThread
@@ -158,12 +158,13 @@ public class ExecutorBizImpl implements ExecutorBiz {
             }
         }
 
-        // replace thread (new or exists invalid)
+        // 新的thread或者老的失效
         if (jobThread == null) {
+            //registJobThread方法里，jobthread运行了run方法，run方法里关联了handler，jobhandler再调用datax.py
             jobThread = JobExecutor.registJobThread(triggerParam.getJobId(), jobHandler, removeOldReason);
         }
 
-        // push data to queue
+        // push data 到当前jobthread，后续执行
         ReturnT<String> pushResult = jobThread.pushTriggerQueue(triggerParam);
         return pushResult;
     }

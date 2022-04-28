@@ -22,7 +22,7 @@ public class ExecutorBizTest {
     public static void main(String[] args) throws Exception {
 
         // param
-        String jobHandler = "demoJobHandler";
+        String jobHandler = "executorJobHandler";
         String params = "";
 
         runTest(jobHandler, params);

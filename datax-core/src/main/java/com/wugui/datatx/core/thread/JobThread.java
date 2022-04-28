@@ -24,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 
 /**
- * handler thread
+ * handler thread， job thread启动job handler启动datax.py
  *
  * @author xuxueli 2016-1-16 19:52:47
  */
@@ -106,7 +106,7 @@ public class JobThread extends Thread {
             logger.error(e.getMessage(), e);
         }
 
-        // execute
+        // execute,真正执行的入口，死循环执行直到tostop
         while (!toStop) {
             running = false;
             idleTimes++;
@@ -114,7 +114,7 @@ public class JobThread extends Thread {
             TriggerParam tgParam = null;
             ReturnT<String> executeResult = null;
             try {
-                // to check toStop signal, we need cycle, so wo cannot use queue.take(), instand of poll(timeout)
+                // to check toStop signal, we need cycle, so wo cannot use queue.take(), instead of poll(timeout)
                 tgParam = triggerQueue.poll(3L, TimeUnit.SECONDS);
                 if (tgParam != null) {
                     running = true;
@@ -134,6 +134,7 @@ public class JobThread extends Thread {
                         Thread futureThread = null;
                         try {
                             final TriggerParam tgParamT = tgParam;
+                            //
                             FutureTask<ReturnT<String>> futureTask = new FutureTask<>(() -> handler.execute(tgParamT));
                             futureThread = new Thread(futureTask);
                             futureThread.start();

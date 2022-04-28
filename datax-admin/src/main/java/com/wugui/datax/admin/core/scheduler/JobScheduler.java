@@ -97,7 +97,7 @@ public class JobScheduler {
             return executorBiz;
         }
 
-        // set-cache
+        // client bean
         XxlRpcReferenceBean referenceBean = new XxlRpcReferenceBean();
         referenceBean.setClient(NettyHttpClient.class);
         referenceBean.setSerializer(HessianSerializer.class);
